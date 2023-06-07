@@ -12,6 +12,7 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
   TOGGLE_SIDEBAR,
+  LOGOUT_USER,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -49,11 +50,11 @@ const AppProvider = ({ children }) => {
     localStorage.setItem("token", token);
     localStorage.setItem("location", location);
   };
-  // //const removeUserFromLocalStorage = () => {
-  //   localStorage.removeItem("token");
-  //   localStorage.removeItem("user");
-  //   localStorage.removeItem("location");
-  // };
+  const removeUserFromLocalStorage = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("location");
+  };
   const registerUser = async (currentUser) => {
     dispatch({ type: REGISTER_USER_BEGIN });
     try {
@@ -101,10 +102,20 @@ const AppProvider = ({ children }) => {
   const toggleSidebar = () => {
     dispatch({ type: TOGGLE_SIDEBAR });
   };
-
+  const logoutUser = () => {
+    dispatch({ type: LOGOUT_USER });
+    removeUserFromLocalStorage();
+  };
   return (
     <AppContext.Provider
-      value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar }}
+      value={{
+        ...state,
+        displayAlert,
+        registerUser,
+        loginUser,
+        toggleSidebar,
+        logoutUser,
+      }}
     >
       {children}
     </AppContext.Provider>
