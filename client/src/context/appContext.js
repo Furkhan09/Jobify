@@ -35,6 +35,8 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  axios.defaults.headers["Authorization"] = `Bearer ${state.token}`;
   const displayAlert = () => {
     dispatch({ type: DISPLAY_ALERT });
     clearAlert();
@@ -106,6 +108,21 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
+  const updateUser = async (currentUser) => {
+    try {
+      const { data } = await axios.patch(
+        "/api/v1/auth/updateUser",
+        currentUser
+      );
+      const { data: tours } = await axios.get(
+        "https://course-api.com/react-tours-project"
+      );
+      console.log(data);
+      console.log(tours);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
   return (
     <AppContext.Provider
       value={{
@@ -115,6 +132,7 @@ const AppProvider = ({ children }) => {
         loginUser,
         toggleSidebar,
         logoutUser,
+        updateUser,
       }}
     >
       {children}

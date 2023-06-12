@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import connectDB from "./db/connect.js";
 dotenv.config();
 import morgan from "morgan";
-
+import authenticateUser from "./middleware/auth.js";
 //routers
 import authRouter from "./routes/authRoutes.js";
 import jobRouter from "./routes/jobRoutes.js";
@@ -28,7 +28,7 @@ app.get("/api/v1", (req, res) => {
 console.log("hello hello");
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", jobRouter);
+app.use("/api/v1/jobs", authenticateUser, jobRouter);
 
 app.use(express.json());
 app.use(notFoundMiddleware);
