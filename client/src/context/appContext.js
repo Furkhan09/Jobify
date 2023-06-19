@@ -30,6 +30,8 @@ import {
   EDIT_JOB_SUCCESS,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
+  CLEAR_FILTERS,
+  CHANGE_PAGE,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -60,6 +62,11 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
+  search: "",
+  searchStatus: "all",
+  searchType: "all",
+  sort: "latest",
+  sortOptions: ["latest", "oldest", "a-z", "z-a"],
 };
 
 const AppContext = React.createContext();
@@ -212,7 +219,12 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
   const getJobs = async () => {
-    let url = `/jobs`;
+    const { page, search, searchStatus, searchType, sort } = state;
+
+    let url = `/jobs?page=${page}status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
+    if (search) {
+      url = url + `&search=${search}`;
+    }
     dispatch({ type: GET_JOBS_BEGIN });
     try {
       const { data } = await authFetch(url);
@@ -279,6 +291,12 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const clearFilters = () => {
+    dispatch({ type: CLEAR_FILTERS });
+  };
+  const changePage = (page) => {
+    dispatch({ type: CHANGE_PAGE, payload: { page } });
+  };
   return (
     <AppContext.Provider
       value={{
@@ -297,6 +315,8 @@ const AppProvider = ({ children }) => {
         deleteJob,
         editJob,
         showStats,
+        clearFilters,
+        changePage,
       }}
     >
       {children}
